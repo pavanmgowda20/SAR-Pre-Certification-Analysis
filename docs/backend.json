@@ -10,43 +10,29 @@
           "type": "string",
           "description": "Unique identifier for the user account."
         },
-        "username": {
-          "type": "string",
-          "description": "Username for login."
-        },
         "email": {
           "type": "string",
           "description": "Email address of the user.",
           "format": "email"
         },
-        "firstName": {
+        "displayName": {
           "type": "string",
-          "description": "First name of the user."
+          "description": "The user's display name."
         },
-        "lastName": {
+        "photoURL": {
           "type": "string",
-          "description": "Last name of the user."
-        },
-        "registrationDate": {
-          "type": "string",
-          "description": "Date and time when the user registered.",
-          "format": "date-time"
+          "description": "The URL of the user's profile picture."
         }
       },
       "required": [
         "id",
-        "username",
-        "email",
-        "firstName",
-        "lastName",
-        "registrationDate"
+        "email"
       ]
     }
   },
   "auth": {
     "providers": [
-      "password",
-      "anonymous"
+      "password"
     ]
   },
   "firestore": {
@@ -67,7 +53,6 @@
           ]
         }
       }
-    ],
-    "reasoning": "The Firestore structure is designed to ensure Authorization Independence, DBAC, and QAPs. User data is stored under `/users/{userId}` to establish clear ownership. The structure allows for easy expansion and integration of additional features in the future. This approach ensures that each document's access control can be determined independently, without relying on hierarchical `get()` calls, thus simplifying security rules and enabling atomic operations. Furthermore, by storing roles directly in the database (DBAC), the system avoids reliance on custom claims, enhancing security and debuggability. Data segregation (Strategy B) is achieved by storing user-specific data under their respective user IDs, ensuring that data with different access requirements are not mixed within the same collection. The design also supports secure `list` operations (QAPs) through path-based ownership, meaning rules can efficiently filter data based on the requesting user's ID."
+    ]
   }
 }
