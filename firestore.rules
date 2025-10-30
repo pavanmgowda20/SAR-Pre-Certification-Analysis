@@ -1,0 +1,57 @@
+/**
+ * @fileoverview Firestore Security Rules for SARPreCertify application.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for all data stored under the `/users/{userId}` path. Only the authenticated user matching the `userId` path segment has read and write access to their data.
+ *
+ * Data Structure:
+ * User data is stored under the `/users/{userId}` collection, where `{userId}` corresponds to the Firebase Authentication UID.
+ *
+ * Key Security Decisions:
+ * - User listing is explicitly denied.
+ * - Data under `/users/{userId}` is considered private and accessible only to the authenticated user.
+ * - The rules explicitly deny any unauthorized access attempts.
+ *
+ * Denormalization for Authorization:
+ *  The 'id' field within the `/users/{userId}` document is used to ensure that the document ID matches the authenticated user's UID.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Enforces document ownership for user profiles under /users/{userId}.
+     * @path /users/{userId}
+     * @allow (create) User with UID 'user_abc' can create their profile at /users/user_abc if the 'id' field also equals 'user_abc'.
+     * @allow (get, update, delete) User with UID 'user_abc' can read, update, and delete their profile at /users/user_abc.
+     * @deny (create) User with UID 'user_xyz' cannot create a profile at /users/user_abc.
+     * @deny (get, update, delete) User with UID 'user_xyz' cannot read, update, or delete the profile at /users/user_abc.
+     * @principle Enforces document ownership for all operations on user profiles.
+     */
+    match /users/{userId} {
+      // Helper function to check if the user is signed in and owns the resource.
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+          return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if false;
+
+      // On create, enforce that the document's 'id' field matches the userId in the path.
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+
+      // On update, enforce that the document exists and ownership (id) cannot be changed.
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+
+      // On delete, enforce that the document exists and the user is the owner.
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
