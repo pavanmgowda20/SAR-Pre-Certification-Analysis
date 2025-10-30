@@ -9,8 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle, Calculator } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import htmlToDocx from 'html-to-docx';
-import { saveAs } from 'file-saver';
+
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput | null;
@@ -19,53 +18,7 @@ interface SarReportProps {
 
 function ReportView({ data }: { data: GenerateSarRecommendationsOutput }) {
   const handleDownload = async () => {
-    const reportContentElement = document.getElementById('sar-report-content');
-    if (reportContentElement) {
-      const htmlString = `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <title>SAR Pre-Certification Analysis Report</title>
-            <style>
-              body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; }
-              h1, h2, h3, h4, h5, h6 { font-family: 'Arial', sans-serif; }
-              .badge { display: inline-block; padding: 0.25em 0.4em; font-size: 75%; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.25rem; }
-              .badge-destructive { color: #fff; background-color: #dc3545; }
-              .badge-default { color: #fff; background-color: #007bff; }
-              .text-muted-foreground { color: #6c757d; }
-              .font-semibold { font-weight: 600; }
-              .font-mono { font-family: 'Courier New', Courier, monospace; }
-              .text-primary { color: #007bff; }
-              .mt-1 { margin-top: 0.25rem; }
-              .mt-2 { margin-top: 0.5rem; }
-              .mb-4 { margin-bottom: 1.5rem; }
-              .p-4 { padding: 1.5rem; }
-              .border { border: 1px solid #dee2e6; }
-              .rounded-lg { border-radius: 0.3rem; }
-              .space-y-4 > * + * { margin-top: 1.5rem; }
-              .space-y-8 > * + * { margin-top: 3rem; }
-              .break-inside-avoid { page-break-inside: avoid; }
-            </style>
-          </head>
-          <body>
-            ${reportContentElement.innerHTML}
-          </body>
-        </html>
-      `;
-
-      try {
-        const fileBuffer = await htmlToDocx(htmlString, undefined, {
-          table: { row: { cantSplit: true } },
-          footer: true,
-          pageNumber: true,
-        });
-
-        saveAs(fileBuffer as Blob, 'SAR-Pre-Certification-Report.docx');
-      } catch (error) {
-        console.error('Error generating DOCX file:', error);
-      }
-    }
+    window.print();
   };
 
   const isFail = data.analysisOverview.toLowerCase().startsWith('fail');
@@ -79,7 +32,7 @@ function ReportView({ data }: { data: GenerateSarRecommendationsOutput }) {
                 <Sparkles className="w-6 h-6 text-primary" />
                 Analysis Overview
               </CardTitle>
-              <Badge variant={isFail ? 'destructive' : 'default'} className="text-lg badge">
+              <Badge variant={isFail ? 'destructive' : 'default'} className="text-lg">
                   {isFail ? (
                       <AlertTriangle className="mr-2 h-5 w-5" />
                   ) : (
@@ -132,10 +85,10 @@ function ReportView({ data }: { data: GenerateSarRecommendationsOutput }) {
           </div>
         </CardContent>
       </div>
-       <CardFooter className="mt-auto pt-6">
+       <CardFooter className="mt-auto pt-6 no-print">
         <Button onClick={handleDownload} className="w-full bg-accent hover:bg-accent/90" size="lg">
           <FileDown className="mr-2 h-5 w-5" />
-          Save Report as DOCX
+          Save Report as PDF
         </Button>
       </CardFooter>
     </div>
