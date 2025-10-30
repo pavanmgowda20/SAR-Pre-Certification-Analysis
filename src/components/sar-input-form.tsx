@@ -120,7 +120,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
               ) : (
                 <Bot className="mr-2 h-5 w-5" />
               )}
-              {isSubmitting ? 'Analyzing...' : 'Run AI Analysis'}
+              {isSubmitting ? 'Analyzing...' : 'Run Analysis'}
             </Button>
           </form>
         </Form>
