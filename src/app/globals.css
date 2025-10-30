@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --background: 220 40% 8%;
+    --foreground: 180 50% 95%;
+    --card: 220 40% 12%;
+    --card-foreground: 180 50% 95%;
+    --popover: 220 40% 8%;
+    --popover-foreground: 180 50% 95%;
     --primary: 180 100% 50%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --primary-foreground: 220 40% 5%;
+    --secondary: 220 40% 18%;
+    --secondary-foreground: 180 50% 95%;
+    --muted: 220 40% 18%;
+    --muted-foreground: 180 50% 70%;
     --accent: 150 70% 45%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 40% 18%;
+    --input: 220 40% 18%;
     --ring: 180 100% 50%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -79,6 +79,22 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: url('https://storage.googleapis.com/project-spark-b2c9b.appspot.com/generated/vsar5ot2m9qg/2024-07-29-10-33-02-181_0.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: hsl(var(--background));
+    opacity: 0.8;
+    z-index: -1;
   }
 }
 
