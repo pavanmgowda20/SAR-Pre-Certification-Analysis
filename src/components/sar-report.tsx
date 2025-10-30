@@ -9,7 +9,8 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles } from 'lucide-react';
+import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle, Calculator } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput;
@@ -20,6 +21,8 @@ function ReportView({ data }: SarReportProps) {
     window.print();
   };
 
+  const isFail = data.analysisOverview.toLowerCase().startsWith('fail');
+
   return (
     <div className="printable-area">
       <div className="hidden print:block p-8">
@@ -29,14 +32,43 @@ function ReportView({ data }: SarReportProps) {
       </div>
 
       <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Sparkles className="w-6 h-6 text-primary" />
-          Analysis Overview
-        </CardTitle>
+        <div className="flex justify-between items-start">
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              Analysis Overview
+            </CardTitle>
+            <Badge variant={isFail ? 'destructive' : 'default'} className="text-lg">
+                {isFail ? (
+                    <AlertTriangle className="mr-2 h-5 w-5" />
+                ) : (
+                    <CheckCircle className="mr-2 h-5 w-5" />
+                )}
+                {data.analysisOverview.split(' ')[0]}
+            </Badge>
+        </div>
       </CardHeader>
       <CardContent className="space-y-8">
         <p className="text-muted-foreground">{data.analysisOverview}</p>
         
+        {data.calculations && data.calculations.length > 0 && (
+          <div>
+            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <Calculator className="w-5 h-5 text-accent" />
+              Key Calculations
+            </h3>
+            <div className="space-y-4">
+              {data.calculations.map((calc, index) => (
+                <div key={index} className="p-4 border rounded-lg bg-background/50 break-inside-avoid">
+                  <p className="font-semibold">{calc.parameter}: <span className="font-mono text-primary">{calc.value}</span></p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    <span className="font-semibold">Formula:</span> {calc.formula}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div>
           <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-accent" />
@@ -75,7 +107,7 @@ function WelcomeView() {
       </div>
       <h2 className="text-2xl font-bold">Ready for Analysis</h2>
       <p className="text-muted-foreground max-w-sm">
-        Fill in the AAAU parameters on the left to run the AI-powered SAR pre-certification analysis. The results and recommendations will appear here.
+        Fill in the detailed AAAU parameters on the left to run the AI-powered SAR pre-certification analysis. The results and recommendations will appear here.
       </p>
     </CardContent>
   );

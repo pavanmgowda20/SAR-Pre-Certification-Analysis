@@ -1,30 +1,30 @@
 import { z } from 'zod';
 
 export const SarAnalysisSchema = z.object({
-  antennaGain: z.coerce
-    .number({ required_error: 'Antenna gain is required.', invalid_type_error: 'Must be a number' })
-    .min(0, 'Must be non-negative')
-    .max(60, 'Gain seems unusually high.'),
-  frequency: z.coerce
-    .number({ required_error: 'Frequency is required.', invalid_type_error: 'Must be a number' })
-    .min(0.1, 'Frequency must be at least 0.1 GHz')
-    .max(100, 'Frequency seems too high for this tool.'),
-  sideLobeLevel: z.coerce
-    .number({ required_error: 'Side lobe level is required.', invalid_type_error: 'Must be a number' })
-    .min(-100, 'Side lobe level is unusually low.')
-    .max(0, 'Side lobe level cannot be positive.'),
-  inputPower: z.coerce
-    .number({ required_error: 'Input power is required.', invalid_type_error: 'Must be a number' })
-    .min(-30, 'Power seems too low.')
-    .max(60, 'Power seems unusually high.'),
-  dutyCycle: z.coerce
-    .number({ required_error: 'Duty cycle is required.', invalid_type_error: 'Must be a number' })
-    .min(0, 'Must be between 0 and 100')
-    .max(100, 'Must be between 0 and 100.'),
-  distance: z.coerce
-    .number({ required_error: 'Distance is required.', invalid_type_error: 'Must be a number' })
-    .min(0.1, 'Distance must be at least 0.1 cm')
-    .max(100, 'Distance should be within 100cm for SAR.'),
+  // Array-Level Radiation Parameters
+  eirp: z.coerce.number().optional(),
+  gt: z.coerce.number().optional(),
+  beamPointingAccuracy: z.coerce.number().optional(),
+  sidelobeLevel: z.coerce.number({ required_error: 'Side lobe level is required.', invalid_type_error: 'Must be a number' }),
+  islr: z.coerce.number().optional(),
+  
+  // SAR-Specific Signal Quality Parameters
+  phaseStability: z.coerce.number().optional(),
+  amplitudeStability: z.coerce.number().optional(),
+  chirpBandwidth: z.coerce.number().optional(),
+  crossPolIsolation: z.coerce.number().optional(),
+  
+  // TRM (Transmit/Receive Module) Level Parameters
+  trmOutputPower: z.coerce.number().optional(),
+  pae: z.coerce.number().optional(),
+  noiseFigure: z.coerce.number().optional(),
+
+  // Original simple fields (can be deprecated or used for a "simple" mode later)
+  antennaGain: z.coerce.number({ required_error: 'Antenna gain is required.', invalid_type_error: 'Must be a number' }),
+  frequency: z.coerce.number({ required_error: 'Frequency is required.', invalid_type_error: 'Must be a number' }),
+  inputPower: z.coerce.number({ required_error: 'Input power is required.', invalid_type_error: 'Must be a number' }),
+  dutyCycle: z.coerce.number({ required_error: 'Duty cycle is required.', invalid_type_error: 'Must be a number' }),
+  distance: z.coerce.number({ required_error: 'Distance is required.', invalid_type_error: 'Must be a number' }),
 });
 
 export type SarAnalysisInput = z.infer<typeof SarAnalysisSchema>;
