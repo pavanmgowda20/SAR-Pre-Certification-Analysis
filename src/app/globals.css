@@ -81,3 +81,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  .no-print {
+    display: none;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  #sar-report-content {
+    -webkit-print-color-adjust: exact; 
+    print-color-adjust: exact;
+  }
+}

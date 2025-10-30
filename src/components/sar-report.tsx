@@ -2,82 +2,27 @@ import type { GenerateSarRecommendationsOutput } from '@/ai/flows/generate-sar-r
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle, Calculator } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import htmlToDocx from 'html-to-docx';
-import { saveAs } from 'file-saver';
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput;
 }
 
 function ReportView({ data }: SarReportProps) {
-  const generateReportHtml = () => {
-    let htmlString = `
-      <h1>SAR Pre-Certification Analysis Report</h1>
-      <p>Date: ${new Date().toLocaleDateString()}</p>
-      <br />
-      <h2>Analysis Overview</h2>
-      <p>${data.analysisOverview}</p>
-      <br />
-    `;
-  
-    if (data.calculations && data.calculations.length > 0) {
-      htmlString += `
-        <h2>Key Calculations</h2>
-      `;
-      data.calculations.forEach(calc => {
-        htmlString += `
-          <div>
-            <h3>${calc.parameter}</h3>
-            <p><strong>Value:</strong> ${calc.value}</p>
-            <p><strong>Formula:</strong> ${calc.formula}</p>
-          </div>
-          <br />
-        `;
-      });
-    }
-  
-    if (data.recommendations && data.recommendations.length > 0) {
-      htmlString += `
-        <h2>Recommendations</h2>
-      `;
-      data.recommendations.forEach(rec => {
-        htmlString += `
-          <div>
-            <p><strong>Recommendation:</strong> ${rec.recommendation}</p>
-            <p><strong>Rationale:</strong> ${rec.rationale.evidence}</p>
-          </div>
-          <br />
-        `;
-      });
-    }
-    
-    return htmlString;
-  };
-
-  const handleDownload = async () => {
-    const htmlString = generateReportHtml();
-    
-    const fileBuffer = await htmlToDocx(htmlString, undefined, {
-      font: 'Inter',
-      fontSize: 12,
-    });
-  
-    saveAs(fileBuffer, 'SAR-Pre-Certification-Report.docx');
+  const handlePrint = () => {
+    window.print();
   };
 
   const isFail = data.analysisOverview.toLowerCase().startsWith('fail');
 
   return (
-    <div>
+    <div id="sar-report-content">
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardTitle className="text-2xl flex items-center gap-2">
@@ -136,10 +81,10 @@ function ReportView({ data }: SarReportProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="mt-auto pt-6">
-        <Button onClick={handleDownload} className="w-full bg-accent hover:bg-accent/90" size="lg">
+      <CardFooter className="mt-auto pt-6 no-print">
+        <Button onClick={handlePrint} className="w-full bg-accent hover:bg-accent/90" size="lg">
           <FileDown className="mr-2 h-5 w-5" />
-          Download Report
+          Save Report as PDF
         </Button>
       </CardFooter>
     </div>
