@@ -40,6 +40,17 @@ import {
 
 const formGroups = [
     {
+        title: 'Core System Parameters',
+        icon: Antenna,
+        fields: [
+             { name: 'antennaGain', label: 'Antenna Gain (dBi)', placeholder: 'e.g., 35', icon: Antenna, required: true },
+             { name: 'frequency', label: 'Frequency (GHz)', placeholder: 'e.g., 9.6', icon: Waves, required: true },
+             { name: 'inputPower', label: 'Total Input Power (dBm)', placeholder: 'e.g., 43', icon: Zap, required: true },
+             { name: 'dutyCycle', label: 'Duty Cycle (%)', placeholder: 'e.g., 20', icon: Percent, required: true },
+             { name: 'distance', label: 'Distance from body (cm)', placeholder: 'e.g., 5', icon: Ruler, required: true },
+        ]
+    },
+    {
         title: 'Array-Level Radiation Parameters',
         icon: Signal,
         fields: [
@@ -55,7 +66,7 @@ const formGroups = [
         icon: Sigma,
         fields: [
             { name: 'phaseStability', label: 'Phase Stability (deg RMS)', placeholder: 'e.g., 0.8', icon: Gauge },
-            { name_prefix: 'amplitude', name: 'amplitudeStability', label: 'Amplitude Stability (dB RMS)', placeholder: 'e.g., 0.1', icon: Gauge },
+            { name: 'amplitudeStability', label: 'Amplitude Stability (dB RMS)', placeholder: 'e.g., 0.1', icon: Gauge },
             { name: 'chirpBandwidth', label: 'Chirp Bandwidth (MHz)', placeholder: 'e.g., 300', icon: Waves },
             { name: 'crossPolIsolation', label: 'Cross-Polarization Isolation (dB)', placeholder: 'e.g., 35', icon: Atom },
         ]
@@ -66,20 +77,9 @@ const formGroups = [
         fields: [
             { name: 'trmOutputPower', label: 'TRM Output Power (W)', placeholder: 'e.g., 8', icon: Zap },
             { name: 'pae', label: 'Power Added Efficiency (%)', placeholder: 'e.g., 35', icon: Percent },
-            { name: 'noiseFigure', label: 'Noise Figure (dB)', placeholder: 'e.g., 2.5', icon_prefix: 'nf', icon: Signal },
+            { name: 'noiseFigure', label: 'Noise Figure (dB)', placeholder: 'e.g., 2.5', icon: Signal },
         ]
     },
-    {
-        title: 'Core System Parameters',
-        icon: Antenna,
-        fields: [
-             { name: 'antennaGain', label: 'Antenna Gain (dBi)', placeholder: 'e.g., 35', icon: Antenna, required: true },
-             { name: 'frequency', label: 'Frequency (GHz)', placeholder: 'e.g., 9.6', icon: Waves, required: true },
-             { name: 'inputPower', label: 'Total Input Power (dBm)', placeholder: 'e.g., 43', icon: Zap, required: true },
-             { name: 'dutyCycle', label: 'Duty Cycle (%)', placeholder: 'e.g., 20', icon: Percent, required: true },
-             { name: 'distance', label: 'Distance from body (cm)', placeholder: 'e.g., 5', icon: Ruler, required: true },
-        ]
-    }
 ] as const;
 
 
@@ -122,7 +122,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onAnalysisSubmit)} className="space-y-6">
-            <Accordion type="multiple" defaultValue={['item-0', 'item-3']} className="w-full">
+            <Accordion type="multiple" defaultValue={['item-0', 'item-1']} className="w-full">
               {formGroups.map((group, groupIndex) => (
                 <AccordionItem value={`item-${groupIndex}`} key={group.title}>
                   <AccordionTrigger className="text-lg font-semibold">
