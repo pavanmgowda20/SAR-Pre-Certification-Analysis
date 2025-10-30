@@ -11,10 +11,11 @@ import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle,
 import { Badge } from '@/components/ui/badge';
 
 interface SarReportProps {
-  data: GenerateSarRecommendationsOutput;
+  data: GenerateSarRecommendationsOutput | null;
+  isLoading: boolean;
 }
 
-function ReportView({ data }: SarReportProps) {
+function ReportView({ data }: { data: GenerateSarRecommendationsOutput }) {
   const handlePrint = () => {
     window.print();
   };
@@ -119,12 +120,7 @@ function LoadingView() {
   );
 }
 
-interface ReportContainerProps {
-  data: GenerateSarRecommendationsOutput | null;
-  isLoading: boolean;
-}
-
-export function SarReport({ data, isLoading }: ReportContainerProps) {
+export function SarReport({ data, isLoading }: SarReportProps) {
   return (
     <Card className="w-full min-h-[500px] lg:min-h-full flex flex-col shadow-lg">
       {isLoading ? <LoadingView /> : data ? <ReportView data={data} /> : <WelcomeView />}
