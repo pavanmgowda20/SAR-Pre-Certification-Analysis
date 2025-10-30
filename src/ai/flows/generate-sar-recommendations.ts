@@ -30,6 +30,9 @@ const GenerateSarRecommendationsInputSchema = z.object({
   pae: z.number().optional().describe('Power Added Efficiency as a percentage'),
   noiseFigure: z.number().optional().describe('Noise Figure in dB'),
 
+  // Power and Thermal Parameters
+  dcPowerConsumption: z.number().optional().describe('DC Power Consumption in kW'),
+
   // Core System Parameters
   antennaGain: z.number().describe('Antenna gain in dBi'),
   frequency: z.number().describe('Frequency in GHz'),
@@ -64,7 +67,7 @@ const GenerateSarRecommendationsOutputSchema = z.object({
   recommendations: z.array(RecommendationSchema).describe('Array of SAR performance improvement recommendations.'),
 });
 
-export type GenerateSarRecommendationsOutput = zinfer<
+export type GenerateSarRecommendationsOutput = z.infer<
   typeof GenerateSarRecommendationsOutputSchema
 >;
 
@@ -87,6 +90,13 @@ Your analysis must have three parts:
 
 Analyze the following input parameters:
 
+**Core System Parameters:**
+Antenna Gain: {{antennaGain}} dBi
+Frequency: {{frequency}} GHz
+Total Input Power: {{inputPower}} dBm
+Duty Cycle: {{dutyCycle}}%
+Distance from body: {{distance}} cm
+
 **Array-Level Radiation Parameters:**
 {{#if eirp}}EIRP: {{eirp}} dBW{{/if}}
 {{#if gt}}G/T: {{gt}} dB/K{{/if}}
@@ -105,12 +115,8 @@ Sidelobe Level: {{sidelobeLevel}} dB
 {{#if pae}}Power Added Efficiency: {{pae}}%{{/if}}
 {{#if noiseFigure}}Noise Figure: {{noiseFigure}} dB{{/if}}
 
-**Core System Parameters:**
-Antenna Gain: {{antennaGain}} dBi
-Frequency: {{frequency}} GHz
-Total Input Power: {{inputPower}} dBm
-Duty Cycle: {{dutyCycle}}%
-Distance from body: {{distance}} cm
+**Power and Thermal Parameters:**
+{{#if dcPowerConsumption}}DC Power Consumption: {{dcPowerConsumption}} kW{{/if}}
 
 Your response must be structured strictly according to the output schema.`,
 });

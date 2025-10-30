@@ -30,6 +30,7 @@ import {
   Sigma,
   Power,
   Atom,
+  BatteryCharging,
 } from 'lucide-react';
 import {
   Accordion,
@@ -80,6 +81,13 @@ const formGroups = [
             { name: 'noiseFigure', label: 'Noise Figure (dB)', placeholder: 'e.g., 2.5', icon: Signal },
         ]
     },
+    {
+        title: 'Power and Thermal Parameters',
+        icon: BatteryCharging,
+        fields: [
+            { name: 'dcPowerConsumption', label: 'DC Power Consumption (kW)', placeholder: 'e.g., 1.8', icon: Zap },
+        ]
+    }
 ] as const;
 
 
@@ -109,6 +117,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
       trmOutputPower: undefined,
       pae: undefined,
       noiseFigure: undefined,
+      dcPowerConsumption: undefined,
     },
     mode: 'onTouched',
   });

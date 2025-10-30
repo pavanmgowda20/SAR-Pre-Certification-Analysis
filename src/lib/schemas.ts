@@ -19,7 +19,10 @@ export const SarAnalysisSchema = z.object({
   pae: z.coerce.number().optional(),
   noiseFigure: z.coerce.number().optional(),
 
-  // Original simple fields (can be deprecated or used for a "simple" mode later)
+  // Power and Thermal Parameters
+  dcPowerConsumption: z.coerce.number().optional(),
+
+  // Core System Parameters
   antennaGain: z.coerce.number({ required_error: 'Antenna gain is required.', invalid_type_error: 'Must be a number' }),
   frequency: z.coerce.number({ required_error: 'Frequency is required.', invalid_type_error: 'Must be a number' }),
   inputPower: z.coerce.number({ required_error: 'Input power is required.', invalid_type_error: 'Must be a number' }),
