@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'SARPreCertify',
+  title: 'SAR Pre-Certification Analysis',
   description: 'AI-powered SAR pre-certification analysis tool.',
 };
 

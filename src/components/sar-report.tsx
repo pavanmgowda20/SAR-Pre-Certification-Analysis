@@ -26,7 +26,7 @@ function ReportView({ data }: SarReportProps) {
   return (
     <div className="printable-area">
       <div className="hidden print:block p-8">
-        <h1 className="text-3xl font-bold">SARPreCertify Analysis Report</h1>
+        <h1 className="text-3xl font-bold">SAR Pre-Certification Analysis Report</h1>
         <p className="text-muted-foreground">{new Date().toLocaleDateString()}</p>
         <Separator className="my-4" />
       </div>

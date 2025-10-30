@@ -55,10 +55,10 @@ export default function WelcomePage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-       <div className="flex items-center gap-3 mb-8">
+       <div className="flex flex-col items-center gap-3 mb-8 text-center">
           <ShieldCheck className="w-12 h-12 text-primary" />
           <h1 className="text-4xl font-bold tracking-tight text-foreground">
-            SARPreCertify
+            SAR Pre-Certification Analysis
           </h1>
         </div>
       <Tabs defaultValue="login" className="w-full max-w-md">

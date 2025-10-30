@@ -19,8 +19,8 @@ export function AppHeader() {
       <div className="container mx-auto flex items-center justify-between">
         <Link href="/home" className="flex items-center gap-3">
           <ShieldCheck className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            SARPreCertify
+          <h1 className="text-xl font-bold tracking-tight text-foreground">
+            SAR Pre-Certification Analysis
           </h1>
         </Link>
         <div className="flex items-center gap-4">
