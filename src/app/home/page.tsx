@@ -42,7 +42,7 @@ export default function Home() {
   return (
     <main className="flex-1 p-4 md:p-8 container mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        <div className="lg:col-span-3 flex flex-col gap-8 no-print">
+        <div className="lg:col-span-3 flex flex-col gap-8">
           <SarInputForm
             onAnalysisSubmit={handleAnalysisSubmit}
             isSubmitting={isLoading}

@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Antenna,
-  Bot,
+  FileSearch,
   Loader2,
   Waves,
   Zap,
@@ -171,7 +171,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
               {isSubmitting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
-                <Bot className="mr-2 h-5 w-5" />
+                <FileSearch className="mr-2 h-5 w-5" />
               )}
               {isSubmitting ? 'Analyzing...' : 'Run Analysis'}
             </Button>

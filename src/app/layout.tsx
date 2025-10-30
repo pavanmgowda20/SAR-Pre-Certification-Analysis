@@ -6,7 +6,7 @@ import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
   title: 'SAR Pre-Certification Analysis',
-  description: 'AI-powered SAR pre-certification analysis tool.',
+  description: 'An automated SAR pre-certification analysis tool.',
 };
 
 export default function RootLayout({

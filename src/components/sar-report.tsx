@@ -11,26 +11,73 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle, Calculator } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import htmlToDocx from 'html-to-docx';
+import { saveAs } from 'file-saver';
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput;
 }
 
 function ReportView({ data }: SarReportProps) {
-  const handlePrint = () => {
-    window.print();
+  const generateReportHtml = () => {
+    let htmlString = `
+      <h1>SAR Pre-Certification Analysis Report</h1>
+      <p>Date: ${new Date().toLocaleDateString()}</p>
+      <br />
+      <h2>Analysis Overview</h2>
+      <p>${data.analysisOverview}</p>
+      <br />
+    `;
+  
+    if (data.calculations && data.calculations.length > 0) {
+      htmlString += `
+        <h2>Key Calculations</h2>
+      `;
+      data.calculations.forEach(calc => {
+        htmlString += `
+          <div>
+            <h3>${calc.parameter}</h3>
+            <p><strong>Value:</strong> ${calc.value}</p>
+            <p><strong>Formula:</strong> ${calc.formula}</p>
+          </div>
+          <br />
+        `;
+      });
+    }
+  
+    if (data.recommendations && data.recommendations.length > 0) {
+      htmlString += `
+        <h2>Recommendations</h2>
+      `;
+      data.recommendations.forEach(rec => {
+        htmlString += `
+          <div>
+            <p><strong>Recommendation:</strong> ${rec.recommendation}</p>
+            <p><strong>Rationale:</strong> ${rec.rationale.evidence}</p>
+          </div>
+          <br />
+        `;
+      });
+    }
+    
+    return htmlString;
+  };
+
+  const handleDownload = async () => {
+    const htmlString = generateReportHtml();
+    
+    const fileBuffer = await htmlToDocx(htmlString, undefined, {
+      font: 'Inter',
+      fontSize: 12,
+    });
+  
+    saveAs(fileBuffer, 'SAR-Pre-Certification-Report.docx');
   };
 
   const isFail = data.analysisOverview.toLowerCase().startsWith('fail');
 
   return (
-    <div className="printable-area">
-      <div className="hidden print:block p-8">
-        <h1 className="text-3xl font-bold">SAR Pre-Certification Analysis Report</h1>
-        <p className="text-muted-foreground">{new Date().toLocaleDateString()}</p>
-        <Separator className="my-4" />
-      </div>
-
+    <div>
       <CardHeader>
         <div className="flex justify-between items-start">
             <CardTitle className="text-2xl flex items-center gap-2">
@@ -89,8 +136,8 @@ function ReportView({ data }: SarReportProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="mt-auto pt-6 no-print-in-area">
-        <Button onClick={handlePrint} className="w-full bg-accent hover:bg-accent/90" size="lg">
+      <CardFooter className="mt-auto pt-6">
+        <Button onClick={handleDownload} className="w-full bg-accent hover:bg-accent/90" size="lg">
           <FileDown className="mr-2 h-5 w-5" />
           Download Report
         </Button>
@@ -107,7 +154,7 @@ function WelcomeView() {
       </div>
       <h2 className="text-2xl font-bold">Ready for Analysis</h2>
       <p className="text-muted-foreground max-w-sm">
-        Fill in the detailed AAAU parameters on the left to run the AI-powered SAR pre-certification analysis. The results and recommendations will appear here.
+        Fill in the detailed AAAU parameters on the left to run the automated SAR pre-certification analysis. The results and recommendations will appear here.
       </p>
     </CardContent>
   );
@@ -121,7 +168,7 @@ function LoadingView() {
       </div>
       <h2 className="text-2xl font-bold">Analyzing...</h2>
       <p className="text-muted-foreground max-w-sm">
-        Our AI is processing the parameters. This may take a moment.
+        The system is processing the parameters. This may take a moment.
       </p>
     </CardContent>
   );

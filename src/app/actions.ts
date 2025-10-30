@@ -13,14 +13,13 @@ export async function runAnalysis(input: SarAnalysisInput): Promise<AnalysisResu
     const validatedFields = SarAnalysisSchema.safeParse(input);
 
     if (!validatedFields.success) {
-      // This should ideally be caught by client-side validation, but serves as a safeguard.
       return { error: "Invalid input provided. Please check the form and try again." }; 
     }
 
     const result = await generateSarRecommendations(validatedFields.data);
     
     if (!result) {
-      return { error: "The AI analysis failed to produce a result. Please adjust your parameters or try again later." };
+      return { error: "The analysis failed to produce a result. Please adjust your parameters or try again later." };
     }
 
     return { data: result };
