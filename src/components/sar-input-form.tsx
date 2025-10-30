@@ -106,7 +106,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
                         {fieldInfo.label}
                       </FormLabel>
                       <FormControl>
-                        <Input type="number" step="any" placeholder={fieldInfo.placeholder} {...field} value={field.value ?? ''} />
+                        <Input type="number" step="any" placeholder={fieldInfo.placeholder} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
