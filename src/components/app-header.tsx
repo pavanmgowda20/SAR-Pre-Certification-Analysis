@@ -1,4 +1,4 @@
-import { ShieldCheck, User as UserIcon } from 'lucide-react';
+import { Radio, User as UserIcon } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { useUser, useFirebase } from '@/firebase';
@@ -18,7 +18,7 @@ export function AppHeader() {
     <header className="py-5 px-4 md:px-8 border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10 no-print">
       <div className="container mx-auto flex items-center justify-between">
         <Link href="/home" className="flex items-center gap-3">
-          <ShieldCheck className="w-8 h-8 text-primary" />
+          <Radio className="w-8 h-8 text-primary" />
           <h1 className="text-xl font-bold tracking-tight text-foreground">
             SAR Pre-Certification Analysis
           </h1>

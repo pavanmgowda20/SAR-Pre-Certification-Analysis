@@ -21,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { ShieldCheck } from 'lucide-react';
+import { Radio } from 'lucide-react';
 
 export default function WelcomePage() {
   const [email, setEmail] = useState('');
@@ -56,7 +56,7 @@ export default function WelcomePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
        <div className="flex flex-col items-center gap-3 mb-8 text-center">
-          <ShieldCheck className="w-12 h-12 text-primary" />
+          <Radio className="w-12 h-12 text-primary" />
           <h1 className="text-4xl font-bold tracking-tight text-foreground">
             SAR Pre-Certification Analysis
           </h1>
