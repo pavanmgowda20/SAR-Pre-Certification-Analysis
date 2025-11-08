@@ -1,11 +1,13 @@
+
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
 } from 'firebase/auth';
 import { useFirebase } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,7 @@ import { Radio } from 'lucide-react';
 export default function WelcomePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { auth } = useFirebase();
@@ -35,7 +38,8 @@ export default function WelcomePage() {
     setLoading(true);
     try {
       if (action === 'signup') {
-        await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName });
         toast({ title: 'Sign up successful!', description: 'Redirecting to the app...' });
       } else {
         await signInWithEmailAndPassword(auth, email, password);
@@ -46,6 +50,33 @@ export default function WelcomePage() {
       toast({
         variant: 'destructive',
         title: 'Authentication Error',
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      toast({
+        variant: 'destructive',
+        title: 'Email required',
+        description: 'Please enter your email address to reset your password.',
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({
+        title: 'Password reset email sent',
+        description: 'Check your inbox for instructions to reset your password.',
+      });
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Error sending reset email',
         description: error.message,
       });
     } finally {
@@ -96,6 +127,11 @@ export default function WelcomePage() {
                   required
                 />
               </div>
+              <div className="text-right">
+                <Button variant="link" size="sm" onClick={handlePasswordReset} className="p-0 h-auto">
+                  Forgot Password?
+                </Button>
+              </div>
             </CardContent>
             <CardFooter>
               <Button
@@ -117,6 +153,17 @@ export default function WelcomePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+               <div className="space-y-2">
+                <Label htmlFor="signup-name">Display Name</Label>
+                <Input
+                  id="signup-name"
+                  type="text"
+                  placeholder="John Doe"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  required
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="signup-email">Email</Label>
                 <Input
