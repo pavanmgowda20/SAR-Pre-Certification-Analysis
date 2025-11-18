@@ -11,12 +11,14 @@ import { CalculationFormulas } from '@/components/calculation-formulas';
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState<GenerateSarRecommendationsOutput | null>(null);
+  const [latestInput, setLatestInput] = useState<SarAnalysisInput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleAnalysisSubmit = async (data: SarAnalysisInput) => {
     setIsLoading(true);
     setAnalysisResult(null);
+    setLatestInput(data);
     try {
       const result = await runAnalysis(data);
       if (result.error) {
@@ -50,7 +52,7 @@ export default function Home() {
           <CalculationFormulas />
         </div>
         <div className="lg:col-span-2">
-          <SarReport data={analysisResult} isLoading={isLoading} />
+          <SarReport data={analysisResult} isLoading={isLoading} inputs={latestInput} />
         </div>
       </div>
     </main>
