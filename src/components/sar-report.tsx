@@ -12,8 +12,6 @@ import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle,
 import { Badge } from '@/components/ui/badge';
 import type { SarAnalysisInput } from '@/lib/schemas';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import htmlToDocx from 'html-to-docx';
-import { saveAs } from 'file-saver';
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput | null;
@@ -28,7 +26,7 @@ const inputLabels: Record<keyof SarAnalysisInput, string> = {
   dutyCycle: 'Duty Cycle (%)',
   distance: 'Distance from body (cm)',
   sidelobeLevel: 'Sidelobe Level (dB)',
-eirp: 'EIRP (dBW)',
+  eirp: 'EIRP (dBW)',
   gt: 'G/T (dB/K)',
   beamPointingAccuracy: 'Beam Pointing Accuracy (deg)',
   islr: 'ISLR (dB)',
@@ -44,17 +42,8 @@ eirp: 'EIRP (dBW)',
 
 
 function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; inputs: SarAnalysisInput | null }) {
-  const handleDownload = async () => {
-    const reportContainer = document.getElementById('sar-report-content');
-    if (reportContainer) {
-        const fileBuffer = await htmlToDocx(reportContainer.outerHTML, undefined, {
-            table: { row: { cantSplit: true } },
-            footer: true,
-            pageNumber: true,
-        });
-        
-        saveAs(fileBuffer, 'SAR-Pre-Certification-Report.docx');
-    }
+  const handleDownload = () => {
+    window.print();
   };
 
   const isFail = data.analysisOverview.toLowerCase().startsWith('fail');
