@@ -140,7 +140,7 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
             </h3>
             <div className="space-y-4">
               {data.recommendations.map((rec, index) => (
-                <div key_={index} className="p-4 border rounded-lg bg-background/50">
+                <div key={index} className="p-4 border rounded-lg bg-background/50">
                   <p className="font-semibold flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
                     <span>{rec.recommendation}</span>
