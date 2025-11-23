@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { AppHeader } from '@/components/app-header';
 import { Skeleton } from '@/components/ui/skeleton';
+import Image from 'next/image';
 
 export default function HomeLayout({
   children,
@@ -46,9 +47,18 @@ export default function HomeLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <AppHeader />
-      {children}
+    <div className="min-h-screen flex flex-col bg-background relative">
+       <Image
+        src="https://picsum.photos/seed/jet-fighter/1920/1080"
+        alt="Jet fighter background"
+        fill
+        className="object-cover object-center opacity-10"
+        data-ai-hint="jet fighter"
+      />
+      <div className="relative z-10 flex flex-col flex-1">
+        <AppHeader />
+        {children}
+      </div>
     </div>
   );
 }
