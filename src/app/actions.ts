@@ -1,6 +1,6 @@
 'use server';
 
-import { generateSarRecommendations, type GenerateSarRecommendationsOutput } from '@/ai/flows/generate-sar-recommendations';
+import { generateSarRecommendations, type GenerateSarRecommendationsOutput, type GenerateSarRecommendationsInput } from '@/ai/flows/generate-sar-recommendations';
 import { SarAnalysisSchema, type SarAnalysisInput } from '@/lib/schemas';
 
 interface AnalysisResult {
@@ -16,7 +16,24 @@ export async function runAnalysis(input: SarAnalysisInput): Promise<AnalysisResu
       return { error: "Invalid input provided. Please check the form and try again." }; 
     }
 
-    const result = await generateSarRecommendations(validatedFields.data);
+    // Default undefined optional fields to 0
+    const analysisInput: GenerateSarRecommendationsInput = {
+      ...validatedFields.data,
+      eirp: validatedFields.data.eirp ?? 0,
+      gt: validatedFields.data.gt ?? 0,
+      beamPointingAccuracy: validatedFields.data.beamPointingAccuracy ?? 0,
+      islr: validatedFields.data.islr ?? 0,
+      phaseStability: validatedFields.data.phaseStability ?? 0,
+      amplitudeStability: validatedFields.data.amplitudeStability ?? 0,
+      chirpBandwidth: validatedFields.data.chirpBandwidth ?? 0,
+      crossPolIsolation: validatedFields.data.crossPolIsolation ?? 0,
+      trmOutputPower: validatedFields.data.trmOutputPower ?? 0,
+      pae: validatedFields.data.pae ?? 0,
+      noiseFigure: validatedFields.data.noiseFigure ?? 0,
+      dcPowerConsumption: validatedFields.data.dcPowerConsumption ?? 0,
+    };
+
+    const result = await generateSarRecommendations(analysisInput);
     
     if (!result) {
       return { error: "The analysis failed to produce a result. Please adjust your parameters or try again later." };

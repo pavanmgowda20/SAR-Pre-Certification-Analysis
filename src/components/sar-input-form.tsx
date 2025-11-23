@@ -44,48 +44,48 @@ const formGroups = [
         title: 'Core System Parameters',
         icon: Antenna,
         fields: [
-             { name: 'antennaGain', label: 'Antenna Gain (dBi)', placeholder: 'e.g., 35', icon: Antenna, required: true },
-             { name: 'frequency', label: 'Frequency (GHz)', placeholder: 'e.g., 9.6', icon: Waves, required: true },
-             { name: 'inputPower', label: 'Total Input Power (dBm)', placeholder: 'e.g., 43', icon: Zap, required: true },
-             { name: 'dutyCycle', label: 'Duty Cycle (%)', placeholder: 'e.g., 20', icon: Percent, required: true },
-             { name: 'distance', label: 'Distance from body (cm)', placeholder: 'e.g., 5', icon: Ruler, required: true },
+             { name: 'antennaGain', label: 'Antenna Gain (dBi)', icon: Antenna, required: true },
+             { name: 'frequency', label: 'Frequency (GHz)', icon: Waves, required: true },
+             { name: 'inputPower', label: 'Total Input Power (dBm)', icon: Zap, required: true },
+             { name: 'dutyCycle', label: 'Duty Cycle (%)', icon: Percent, required: true },
+             { name: 'distance', label: 'Distance from body (cm)', icon: Ruler, required: true },
         ]
     },
     {
         title: 'Array-Level Radiation Parameters',
         icon: Signal,
         fields: [
-            { name: 'eirp', label: 'EIRP (dBW)', placeholder: 'e.g., 65', icon: Zap },
-            { name: 'gt', label: 'G/T (dB/K)', placeholder: 'e.g., 32', icon: Thermometer },
-            { name: 'beamPointingAccuracy', label: 'Beam Pointing Accuracy (deg)', placeholder: 'e.g., 0.02', icon: Target },
-            { name: 'sidelobeLevel', label: 'Sidelobe Level (dB)', placeholder: 'e.g., -30', icon: Waves, required: true },
-            { name: 'islr', label: 'ISLR (dB)', placeholder: 'e.g., -20', icon: Ratio },
+            { name: 'eirp', label: 'EIRP (dBW)', icon: Zap },
+            { name: 'gt', label: 'G/T (dB/K)', icon: Thermometer },
+            { name: 'beamPointingAccuracy', label: 'Beam Pointing Accuracy (deg)', icon: Target },
+            { name: 'sidelobeLevel', label: 'Sidelobe Level (dB)', icon: Waves, required: true },
+            { name: 'islr', label: 'ISLR (dB)', icon: Ratio },
         ]
     },
     {
         title: 'SAR-Specific Signal Quality Parameters',
         icon: Sigma,
         fields: [
-            { name: 'phaseStability', label: 'Phase Stability (deg RMS)', placeholder: 'e.g., 0.8', icon: Gauge },
-            { name: 'amplitudeStability', label: 'Amplitude Stability (dB RMS)', placeholder: 'e.g., 0.1', icon: Gauge },
-            { name: 'chirpBandwidth', label: 'Chirp Bandwidth (MHz)', placeholder: 'e.g., 300', icon: Waves },
-            { name: 'crossPolIsolation', label: 'Cross-Polarization Isolation (dB)', placeholder: 'e.g., 35', icon: Atom },
+            { name: 'phaseStability', label: 'Phase Stability (deg RMS)', icon: Gauge },
+            { name: 'amplitudeStability', label: 'Amplitude Stability (dB RMS)', icon: Gauge },
+            { name: 'chirpBandwidth', label: 'Chirp Bandwidth (MHz)', icon: Waves },
+            { name: 'crossPolIsolation', label: 'Cross-Polarization Isolation (dB)', icon: Atom },
         ]
     },
     {
         title: 'TRM Level Parameters',
         icon: Power,
         fields: [
-            { name: 'trmOutputPower', label: 'TRM Output Power (W)', placeholder: 'e.g., 8', icon: Zap },
-            { name: 'pae', label: 'Power Added Efficiency (%)', placeholder: 'e.g., 35', icon: Percent },
-            { name: 'noiseFigure', label: 'Noise Figure (dB)', placeholder: 'e.g., 2.5', icon: Signal },
+            { name: 'trmOutputPower', label: 'TRM Output Power (W)', icon: Zap },
+            { name: 'pae', label: 'Power Added Efficiency (%)', icon: Percent },
+            { name: 'noiseFigure', label: 'Noise Figure (dB)', icon: Signal },
         ]
     },
     {
         title: 'Power and Thermal Parameters',
         icon: BatteryCharging,
         fields: [
-            { name: 'dcPowerConsumption', label: 'DC Power Consumption (kW)', placeholder: 'e.g., 1.8', icon: Zap },
+            { name: 'dcPowerConsumption', label: 'DC Power Consumption (kW)', icon: Zap },
         ]
     }
 ] as const;
@@ -154,7 +154,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
                                 {fieldInfo.label} {fieldInfo.required && <span className="text-destructive">*</span>}
                               </FormLabel>
                               <FormControl>
-                                <Input type="number" step="any" placeholder={fieldInfo.placeholder} {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                                <Input type="number" step="any" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
