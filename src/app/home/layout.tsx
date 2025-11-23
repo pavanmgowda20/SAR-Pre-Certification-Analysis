@@ -48,7 +48,7 @@ export default function HomeLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative">
-       <Image
+      <Image
         src="https://picsum.photos/seed/jet-fighter/1920/1080"
         alt="Jet fighter background"
         fill
