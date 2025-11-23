@@ -12,6 +12,16 @@ import { FlaskConical } from 'lucide-react';
 
 const parameterGroups = [
   {
+    groupTitle: 'Core System Parameters',
+    parameters: [
+      { name: 'Antenna Gain', purpose: 'Measures how well the antenna converts input power into radio waves headed in a specific direction.\n\nEIRP = P_in + G_ant - L_line', limit: '20-40 dBi' },
+      { name: 'Frequency', purpose: 'The operating frequency of the radar system.\n\nλ = c / f', limit: '1-100 GHz' },
+      { name: 'Total Input Power', purpose: 'The total electrical power supplied to the transmitter.\n\nP_out = P_in * η', limit: '1-100 dBm' },
+      { name: 'Duty Cycle', purpose: 'The fraction of time the radar is transmitting.\n\nDC = (Pulse Width / Pulse Interval) * 100%', limit: '1-50%' },
+      { name: 'Distance from body', purpose: 'The separation distance between the antenna and the user\'s body.\n\nPD = P_t * G / (4 * π * r^2)', limit: '1-10 cm' },
+    ],
+  },
+  {
     groupTitle: 'Airborne SAR Parameters',
     parameters: [
       {
