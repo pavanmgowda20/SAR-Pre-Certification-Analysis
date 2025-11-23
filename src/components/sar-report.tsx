@@ -1,3 +1,4 @@
+
 import type { GenerateSarRecommendationsOutput } from '@/ai/flows/generate-sar-recommendations';
 import {
   Card,
@@ -51,9 +52,11 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
   const renderInputTable = () => {
     if (!inputs) return null;
 
-    const filteredInputs = Object.entries(inputs).filter(([, value]) => value !== undefined && value !== null && value !== '' && value !== 0);
-
-    if (filteredInputs.length === 0) return null;
+    // Display all inputs, showing 0 for any undefined or null values.
+    const allInputs = Object.keys(inputLabels).map(key => {
+      const value = inputs[key as keyof SarAnalysisInput];
+      return [key, value ?? 0];
+    });
 
     return (
       <div className="break-inside-avoid">
@@ -69,8 +72,8 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredInputs.map(([key, value]) => (
-              <TableRow key={key}>
+            {allInputs.map(([key, value]) => (
+              <TableRow key={key as string}>
                 <TableCell className="font-medium">{inputLabels[key as keyof SarAnalysisInput]}</TableCell>
                 <TableCell className="text-right">{String(value)}</TableCell>
               </TableRow>
