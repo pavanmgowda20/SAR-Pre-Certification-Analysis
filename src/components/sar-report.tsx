@@ -12,6 +12,8 @@ import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle,
 import { Badge } from '@/components/ui/badge';
 import type { SarAnalysisInput } from '@/lib/schemas';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import htmlToDocx from 'html-to-docx';
+import { saveAs } from 'file-saver';
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput | null;
@@ -26,7 +28,7 @@ const inputLabels: Record<keyof SarAnalysisInput, string> = {
   dutyCycle: 'Duty Cycle (%)',
   distance: 'Distance from body (cm)',
   sidelobeLevel: 'Sidelobe Level (dB)',
-  eirp: 'EIRP (dBW)',
+eirp: 'EIRP (dBW)',
   gt: 'G/T (dB/K)',
   beamPointingAccuracy: 'Beam Pointing Accuracy (deg)',
   islr: 'ISLR (dB)',
@@ -43,7 +45,16 @@ const inputLabels: Record<keyof SarAnalysisInput, string> = {
 
 function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; inputs: SarAnalysisInput | null }) {
   const handleDownload = async () => {
-    window.print();
+    const reportContainer = document.getElementById('sar-report-content');
+    if (reportContainer) {
+        const fileBuffer = await htmlToDocx(reportContainer.outerHTML, undefined, {
+            table: { row: { cantSplit: true } },
+            footer: true,
+            pageNumber: true,
+        });
+        
+        saveAs(fileBuffer, 'SAR-Pre-Certification-Report.docx');
+    }
   };
 
   const isFail = data.analysisOverview.toLowerCase().startsWith('fail');
@@ -51,7 +62,7 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
   const renderInputTable = () => {
     if (!inputs) return null;
 
-    const filteredInputs = Object.entries(inputs).filter(([, value]) => value !== undefined && value !== null && value !== '');
+    const filteredInputs = Object.entries(inputs).filter(([, value]) => value !== undefined && value !== null && value !== '' && value !== 0);
 
     if (filteredInputs.length === 0) return null;
 
@@ -154,7 +165,7 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
        <CardFooter className="mt-auto pt-6 no-print">
         <Button onClick={handleDownload} className="w-full bg-accent hover:bg-accent/90" size="lg">
           <FileDown className="mr-2 h-5 w-5" />
-          Save Report as PDF
+          Save Report
         </Button>
       </CardFooter>
     </div>
