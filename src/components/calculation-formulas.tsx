@@ -12,104 +12,85 @@ import { FlaskConical } from 'lucide-react';
 
 const parameterGroups = [
   {
-    groupTitle: '1. Array-Level Radiation Parameters',
+    groupTitle: 'Airborne SAR Parameters',
     parameters: [
       {
-        name: 'EIRP (Effective Isotropic Radiated Power)',
-        purpose:
-          'Measures the total power-gain product in the main beam. Ensures the signal is strong enough to get a good SNR from the target. Formula: EIRP = Pt + Gt (in dB)',
-        limit: 'Highly mission-dependent, but must meet the link budget (e.g., 60-80 dBW).',
+        name: 'EIRP',
+        purpose: 'Effective power radiated in main beam.\n\nEIRP = Pt * G or EIRP(dBW) = Pt(dBW) + G(dBi)',
+        limit: '0-10 dBW (small) / 35-40 dBW (large)',
       },
       {
-        name: 'G/T (Gain-to-Noise-Temperature)',
-        purpose:
-          'The primary figure of merit for the receive chain. A high G/T means the antenna can detect very weak signals. Formula: G/T = Gr - 10log10(Tsys)',
-        limit: 'Must be high enough to meet the Noise Equivalent Sigma Zero (NESZ) requirement (e.g., > 30 dB/K).',
+        name: 'G/T',
+        purpose: 'Sensitivity of antenna + receiver.\n\nG/T = G(dBi) - 10 log10(Tsys)',
+        limit: '-5 to +5 dB/K',
       },
       {
         name: 'Beam Pointing Accuracy',
-        purpose: 'Verifies that the beam can be steered to the commanded angle (in azimuth and elevation) with minimal error.',
-        limit: '< 0.1 x Half-Power Beamwidth (HPBW)',
+        purpose: 'Accuracy of beam steering direction.\n\nError = Bdesired - Bactual',
+        limit: '±0.1° to ±0.5°',
       },
       {
-        name: 'Sidelobe Level (SLL) / Peak Sidelobe Ratio (PSLR)',
-        purpose:
-          'Measures the strength of the largest sidelobe relative to the main beam. Low sidelobes are critical for SAR to prevent ambiguous signals from bright targets from polluting the image.',
-        limit: '< -20 dB (uniform illumination gives -13.2 dB). With tapering (weighting), < -25 dB to -35 dB is a common target.',
+        name: 'Sidelobe Level (SLL)',
+        purpose: 'Level of unwanted sidelobes.\n\nSLL = 20 log10(SL / ML)',
+        limit: '-13 to -25 dB',
       },
       {
-        name: 'Integrated Sidelobe Ratio (ISLR)',
-        purpose: 'Measures the total energy in all sidelobes compared to the main beam. This is a key driver of image contrast.',
-        limit: '< -15 dB is a typical requirement for high-quality imagery.',
-      },
-    ],
-  },
-  {
-    groupTitle: '2. SAR-Specific Signal Quality Parameters',
-    parameters: [
-      {
-        name: 'Phase & Amplitude Stability',
-        purpose:
-          'This is the most critical SAR parameter. It measures the drift in phase and amplitude across the array over the synthetic aperture time. Any drift causes image defocusing.',
-        limit: '≤ 1° RMS phase error\n≤ 0.1 dB RMS amplitude error',
+        name: 'ISLR',
+        purpose: 'Total sidelobe energy vs main lobe.\n\nISLR = 10 log10(Esidelobe / Emain)',
+        limit: '-20 to -30 dB',
       },
       {
-        name: 'Chirp Bandwidth (B)',
-        purpose: 'The bandwidth of the transmitted "chirp" pulse directly sets the range resolution of the SAR. Formula: Range Resolution ρr = c / (2B)',
-        limit: 'Must match the design spec (e.g., 100-500 MHz). Also verify in-band ripple/linearity. High ripple (> 0.5 dB) can create "paired echoes" or "time sidelobes" in the image.',
+        name: 'Phase Stability',
+        purpose: 'How stable phase stays across pulses.\n\nΔφ = (2π / λ) * Δt',
+        limit: '1-5° drift',
       },
       {
-        name: 'Cross-Polarization Isolation',
-        purpose: 'For polarimetric SAR (HH, HV, VV, VH). Measures how much "H" signal leaks into the "V" channel and vice-versa. High leakage ruins the polarimetric data.',
-        limit: '> 30 dB isolation between co-pol and cross-pol channels.',
+        name: 'Amplitude Stability',
+        purpose: 'How constant amplitude remains.\n\nΔA = (Amax - Amin) / Aavg * 100%',
+        limit: '<1% (~0.1 dB)',
       },
       {
-        name: 'TRM-to-TRM Calibration',
-        purpose: 'Checks that all TRMs are set to the same reference phase and amplitude. This is the baseline for all beamforming.',
-        limit: 'Very tight, e.g., ≤ 2° phase and ≤ 0.2 dB amplitude error relative to each other.',
-      },
-    ],
-  },
-  {
-    groupTitle: '3. TRM (Transmit/Receive Module) Level Parameters',
-    parameters: [
-      {
-        name: 'Output Power (Pout)',
-        purpose: 'Power from each individual power amplifier (PA) in the TRM.',
-        limit: '5 - 10 W (Typical for X-band GaN TRMs).',
+        name: 'Chirp Bandwidth',
+        purpose: 'Frequency sweep in one pulse.\n\nB = fmax - fmin',
+        limit: '100-500 MHz',
       },
       {
-        name: 'Power Added Efficiency (PAE)',
-        purpose: 'Measures the efficiency of the PA. This is critical for the satellite/aircraft\'s overall power budget and thermal management. Formula: PAE = (PRF,out - PRF,in) / PDC',
-        limit: '> 30 - 40%',
+        name: 'Cross-Pol Isolation',
+        purpose: 'Ability to separate H/V polarizations.\n\nXPI = 20 log10(Eco / Ecross)',
+        limit: '25-35 dB',
+      },
+      {
+        name: 'TRM Calibration',
+        purpose: 'Accuracy of TRM phase/amplitude matching.\n\nPhase Error = φset - φactual',
+        limit: '<2° phase, <0.2 dB amp',
+      },
+      {
+        name: 'Output Power',
+        purpose: 'RF power produced by each TRM.\n\nPout = V²/R or Pt = Pin * GainPA',
+        limit: '5-50 W/TRM, 1-3 kW total',
+      },
+      {
+        name: 'PAE',
+        purpose: 'Efficiency of DC-to-RF power conversion.\n\nPAE = (Pout - Pin) / PDC * 100%',
+        limit: '30-60%',
       },
       {
         name: 'Noise Figure (NF)',
-        purpose: 'Measures the noise added by the Low Noise Amplifier (LNA) on the receive path. This is a primary driver of G/T.',
-        limit: '< 3 dB (e.g., for an X-band system NF of ~4.3 dB).',
+        purpose: 'Extra noise added by receiver.\n\nNF = SNRin / SNRout',
+        limit: '1-3 dB',
       },
       {
-        name: 'Phase/Amplitude Control',
-        purpose: 'Checks the resolution and accuracy of the phase shifters and attenuators.',
-        limit: '6-bit (or higher) resolution for both phase (5.625° step) and amplitude (~0.5 dB step).',
+        name: 'Phase / Amp Control Bits',
+        purpose: 'Resolution of TRM tuning accuracy.\n\nPhase step = 360° / 2^n; Amp step = Amax / 2^n',
+        limit: '6-7 bits phase (0.5-1°), 0.25-0.5 dB amp',
+      },
+      {
+        name: 'DC Power & Thermal Stability',
+        purpose: 'Power usage + phase drift vs temperature.\n\nPDC = V * I; Phase Drift = k * ΔT',
+        limit: '200-2000 W, <1-2° drift, <0.1 dB amp drift',
       },
     ],
-  },
-  {
-    groupTitle: '4. Power and Thermal Parameters',
-    parameters: [
-      {
-        name: 'DC Power Consumption',
-        purpose: 'Checks the total power draw of the entire array in all modes (standby, Rx-only, Tx) against the platform\'s power budget.',
-        limit: 'Must be within specification (e.g., < 2 kW).',
-      },
-      {
-        name: 'Thermal Stability',
-        purpose: 'The array is "soaked" at its max and min operational temperatures and run at full power to ensure all TRMs stay within their safe junction temperature (Tj) and that performance (especially phase) remains stable.',
-        limit: 'Tj of PAs must stay below max rating (e.g., < 175°C for GaN) with sufficient margin.',
-      },
-    ],
-  },
+  }
 ];
 
 export function CalculationFormulas() {
