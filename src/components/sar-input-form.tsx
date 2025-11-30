@@ -169,7 +169,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
               onChange={handleFileChange}
               className="hidden"
               id="spec-file-upload"
-              accept=".txt,.csv,.md,.json"
+              accept=".txt,.csv,.md,.json,text/plain,text/csv,application/json"
               disabled={isExtracting || isSubmitting}
             />
             <Button 
@@ -183,7 +183,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
                 ) : (
                     <FileText className="mr-2 h-5 w-5" />
                 )}
-                {isExtracting ? 'Analyzing Document...' : (fileName ? `Change File (${fileName})` : 'Upload Spec Sheet (.txt, .csv, .md)')}
+                {isExtracting ? 'Analyzing Document...' : (fileName ? `Change File (${fileName})` : 'Upload Spec Sheet (Text files only)')}
             </Button>
              <p className="text-sm text-muted-foreground text-center">
                 After uploading, review the extracted values below before running the final analysis.
