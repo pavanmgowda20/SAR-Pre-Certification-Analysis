@@ -33,6 +33,13 @@ const GenerateSarRecommendationsInputSchema = z.object({
   inputPower: z.number().describe('Total Input Power in dBm'),
   dutyCycle: z.number().describe('Duty cycle as a percentage'),
   distance: z.number().describe('Distance from body in cm'),
+
+  // Optional parameters that may come from file analysis
+  polarization: z.string().optional(),
+  chirpBandwidth: z.number().optional(),
+  pulseWidth: z.number().optional(),
+  pulseRepetitionFrequency: z.number().optional(),
+  dcPowerConsumption: z.number().optional(),
 });
 
 
@@ -92,15 +99,23 @@ Duty Cycle: {{dutyCycle}}%
 Distance from body: {{distance}} cm
 
 **Airborne SAR Parameters:**
+Sidelobe Level: {{sidelobeLevel}} dB
 {{#if gt}}G/T: {{gt}} dB/K{{/if}}
 {{#if beamPointingAccuracy}}Beam Pointing Accuracy: {{beamPointingAccuracy}} deg{{/if}}
-Sidelobe Level: {{sidelobeLevel}} dB
 {{#if islr}}ISLR: {{islr}} dB{{/if}}
 {{#if phaseStability}}Phase Stability: {{phaseStability}} deg{{/if}}
 {{#if amplitudeStability}}Amplitude Stability: {{amplitudeStability}} dB{{/if}}
 {{#if crossPolIsolation}}Cross-Pol Isolation: {{crossPolIsolation}} dB{{/if}}
 {{#if pae}}Power Added Efficiency: {{pae}}%{{/if}}
 {{#if noiseFigure}}Noise Figure: {{noiseFigure}} dB{{/if}}
+
+**Additional Parameters (if provided):**
+{{#if polarization}}Polarization: {{polarization}}{{/if}}
+{{#if chirpBandwidth}}Chirp Bandwidth: {{chirpBandwidth}} MHz{{/if}}
+{{#if pulseWidth}}Pulse Width: {{pulseWidth}} µs{{/if}}
+{{#if pulseRepetitionFrequency}}Pulse Repetition Frequency: {{pulseRepetitionFrequency}} kHz{{/if}}
+{{#if dcPowerConsumption}}DC Power Consumption: {{dcPowerConsumption}} W{{/if}}
+
 
 Your response must be structured strictly according to the output schema.`,
 });

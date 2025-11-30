@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SarAnalysisSchema, type SarAnalysisInput } from '@/lib/schemas';
+import type { GenerateSarRecommendationsInput } from '@/ai/flows/generate-sar-recommendations';
 import {
   Form,
   FormControl,
@@ -75,13 +76,14 @@ const formGroups = [
 
 
 interface SarInputFormProps {
-  onAnalysisSubmit: (data: SarAnalysisInput) => Promise<void>;
+  onAnalysisSubmit: (data: GenerateSarRecommendationsInput) => Promise<void>;
   isSubmitting: boolean;
 }
 
 export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [extraParams, setExtraParams] = useState<Record<string, any>>({});
   const { toast } = useToast();
 
   const form = useForm<SarAnalysisInput>({
@@ -109,6 +111,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
+      setExtraParams({}); // Reset extra params when a new file is chosen
     }
   };
   
@@ -127,15 +130,22 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
           description: result.error,
         });
       } else if (result.data) {
-        // We need to coerce to number for any of the fields that might be returned
+        const formFields = new Set(formGroups.flatMap(g => g.fields.map(f => f.name)));
+        const newExtraParams: Record<string, any> = {};
+
         for (const [key, value] of Object.entries(result.data)) {
           if (value !== undefined && value !== null) {
-            form.setValue(key as keyof SarAnalysisInput, Number(value), { shouldValidate: true });
+            if (formFields.has(key as any)) {
+              form.setValue(key as keyof SarAnalysisInput, Number(value), { shouldValidate: true });
+            } else {
+              newExtraParams[key] = value;
+            }
           }
         }
+        setExtraParams(newExtraParams);
         toast({
           title: 'Extraction Successful',
-          description: 'Parameters have been populated in the form below.',
+          description: `Parameters populated in the form. ${Object.keys(newExtraParams).length} additional parameters were also found.`,
         });
       }
     } catch (error) {
@@ -149,6 +159,13 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
     }
   };
 
+  const onSubmit = (data: SarAnalysisInput) => {
+    const combinedData: GenerateSarRecommendationsInput = {
+      ...data,
+      ...extraParams,
+    };
+    onAnalysisSubmit(combinedData);
+  };
   
   return (
     <Card className="w-full shadow-lg">
@@ -186,7 +203,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
                         <FileText className="w-5 h-5 text-muted-foreground" />
                         <span className="font-medium">{file.name}</span>
                     </div>
-                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setFile(null)}>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setFile(null); setExtraParams({}); }}>
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
@@ -200,7 +217,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onAnalysisSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <Accordion type="multiple" defaultValue={['item-0', 'item-1']} className="w-full">
                 {formGroups.map((group, groupIndex) => (
                   <AccordionItem value={`item-${groupIndex}`} key={group.title}>

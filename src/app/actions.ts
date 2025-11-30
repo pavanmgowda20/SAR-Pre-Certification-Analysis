@@ -31,27 +31,17 @@ export async function extractParametersFromFile(documentText: string): Promise<E
   }
 }
 
-export async function runAnalysis(input: SarAnalysisInput): Promise<AnalysisResult> {
+export async function runAnalysis(input: GenerateSarRecommendationsInput): Promise<AnalysisResult> {
   try {
+    // We can't fully validate against SarAnalysisSchema as `input` can have extra fields
     const validatedFields = SarAnalysisSchema.safeParse(input);
 
     if (!validatedFields.success) {
-      return { error: "Invalid input provided. Please check the form and try again." }; 
+      return { error: "Invalid input provided for core parameters. Please check the form and try again." }; 
     }
 
-    const analysisInput: GenerateSarRecommendationsInput = {
-      ...validatedFields.data,
-      gt: validatedFields.data.gt ?? 0,
-      beamPointingAccuracy: validatedFields.data.beamPointingAccuracy ?? 0,
-      islr: validatedFields.data.islr ?? 0,
-      phaseStability: validatedFields.data.phaseStability ?? 0,
-      amplitudeStability: validatedFields.data.amplitudeStability ?? 0,
-      crossPolIsolation: validatedFields.data.crossPolIsolation ?? 0,
-      pae: validatedFields.data.pae ?? 0,
-      noiseFigure: validatedFields.data.noiseFigure ?? 0,
-    };
-
-    const result = await generateSarRecommendations(analysisInput);
+    // `input` already contains the merged data from the form and the extracted file data
+    const result = await generateSarRecommendations(input);
     
     if (!result) {
       return { error: "The analysis failed to produce a result. Please adjust your parameters or try again later." };

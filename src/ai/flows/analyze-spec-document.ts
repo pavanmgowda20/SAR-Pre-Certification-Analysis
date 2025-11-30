@@ -24,6 +24,12 @@ const AnalyzeSpecDocumentOutputSchema = z.object({
   crossPolIsolation: z.number().optional(),
   pae: z.number().optional(),
   noiseFigure: z.number().optional(),
+  // Additional parameters that might be found in a spec doc
+  polarization: z.string().optional(),
+  chirpBandwidth: z.number().optional(),
+  pulseWidth: z.number().optional(),
+  pulseRepetitionFrequency: z.number().optional(),
+  dcPowerConsumption: z.number().optional(),
 });
 
 export type AnalyzeSpecDocumentOutput = z.infer<typeof AnalyzeSpecDocumentOutputSchema>;
@@ -40,12 +46,13 @@ const analyzeDocumentPrompt = ai.definePrompt({
   output: { schema: AnalyzeSpecDocumentOutputSchema },
   prompt: `You are an expert at analyzing technical specification documents for wireless communication systems, specifically for SAR (Specific Absorption Rate) compliance.
 
-Your task is to read the following document text and extract the values for the specified AAAU (Active Antenna Array Unit) parameters.
+Your task is to read the following document text and extract the values for ALL specified AAAU (Active Antenna Array Unit) parameters defined in the output schema.
 
 - Identify the value for each parameter in the output schema.
-- The value MUST be a number. Do not include units.
+- The value MUST be a number where applicable (e.g., for antennaGain, frequency). Do not include units in the final JSON.
 - If a parameter is explicitly mentioned, extract its numerical value.
 - If a parameter is not mentioned or its value cannot be determined from the text, leave it as undefined.
+- For 'polarization', extract the string value (e.g., 'Linear', 'Circular', 'Dual-Pol').
 
 Analyze the following document content:
 

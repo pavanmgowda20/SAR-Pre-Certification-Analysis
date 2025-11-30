@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { GenerateSarRecommendationsOutput } from '@/ai/flows/generate-sar-recommendations';
+import type { GenerateSarRecommendationsOutput, GenerateSarRecommendationsInput } from '@/ai/flows/generate-sar-recommendations';
 import { runAnalysis } from '@/app/actions';
 import type { SarAnalysisInput } from '@/lib/schemas';
 import { useToast } from '@/hooks/use-toast';
@@ -11,11 +11,11 @@ import { CalculationFormulas } from '@/components/calculation-formulas';
 
 export default function Home() {
   const [analysisResult, setAnalysisResult] = useState<GenerateSarRecommendationsOutput | null>(null);
-  const [latestInput, setLatestInput] = useState<SarAnalysisInput | null>(null);
+  const [latestInput, setLatestInput] = useState<GenerateSarRecommendationsInput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleAnalysisSubmit = async (data: SarAnalysisInput) => {
+  const handleAnalysisSubmit = async (data: GenerateSarRecommendationsInput) => {
     setIsLoading(true);
     setAnalysisResult(null);
     setLatestInput(data);

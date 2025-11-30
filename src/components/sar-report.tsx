@@ -1,5 +1,5 @@
 
-import type { GenerateSarRecommendationsOutput } from '@/ai/flows/generate-sar-recommendations';
+import type { GenerateSarRecommendationsOutput, GenerateSarRecommendationsInput } from '@/ai/flows/generate-sar-recommendations';
 import {
   Card,
   CardContent,
@@ -11,16 +11,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { CheckCircle, FileDown, Lightbulb, ShieldAlert, Sparkles, AlertTriangle, Calculator, List } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import type { SarAnalysisInput } from '@/lib/schemas';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface SarReportProps {
   data: GenerateSarRecommendationsOutput | null;
   isLoading: boolean;
-  inputs: SarAnalysisInput | null;
+  inputs: GenerateSarRecommendationsInput | null;
 }
 
-const inputLabels: Record<keyof SarAnalysisInput, string> = {
+const allInputLabels: Record<string, string> = {
   antennaGain: 'Antenna Gain (dBi)',
   frequency: 'Frequency (GHz)',
   inputPower: 'Total Input Power (dBm)',
@@ -35,10 +34,20 @@ const inputLabels: Record<keyof SarAnalysisInput, string> = {
   crossPolIsolation: 'Cross-Pol Isolation (dB)',
   pae: 'Power Added Efficiency (PAE) (%)',
   noiseFigure: 'Noise Figure (dB)',
+  polarization: 'Polarization',
+  chirpBandwidth: 'Chirp Bandwidth (MHz)',
+  pulseWidth: 'Pulse Width (µs)',
+  pulseRepetitionFrequency: 'Pulse Repetition Frequency (kHz)',
+  dcPowerConsumption: 'DC Power Consumption (W)',
+};
+
+// Helper to format key for display
+const formatKey = (key: string) => {
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
 };
 
 
-function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; inputs: SarAnalysisInput | null }) {
+function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; inputs: GenerateSarRecommendationsInput | null }) {
   const handleDownload = () => {
     window.print();
   };
@@ -48,11 +57,18 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
   const renderInputTable = () => {
     if (!inputs) return null;
 
-    // Display all inputs, showing 0 for any undefined or null values.
-    const allInputs = Object.keys(inputLabels).map(key => {
-      const value = inputs[key as keyof SarAnalysisInput];
-      return [key, value ?? 0];
-    });
+    const allInputs = Object.entries(inputs)
+      .map(([key, value]) => {
+        if (value === undefined || value === null || (typeof value === 'number' && isNaN(value))) {
+            return null; // Don't show empty/invalid fields
+        }
+        const label = allInputLabels[key] || formatKey(key);
+        return { key, label, value };
+      })
+      .filter(Boolean);
+
+    if (allInputs.length === 0) return null;
+
 
     return (
       <div className="break-inside-avoid">
@@ -68,10 +84,10 @@ function ReportView({ data, inputs }: { data: GenerateSarRecommendationsOutput; 
             </TableRow>
           </TableHeader>
           <TableBody>
-            {allInputs.map(([key, value]) => (
-              <TableRow key={key as string}>
-                <TableCell className="font-medium">{inputLabels[key as keyof SarAnalysisInput]}</TableCell>
-                <TableCell className="text-right">{String(value)}</TableCell>
+            {allInputs.map((item) => (
+              <TableRow key={item!.key}>
+                <TableCell className="font-medium">{item!.label}</TableCell>
+                <TableCell className="text-right">{String(item!.value)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
