@@ -162,7 +162,8 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
             <CardHeader>
               <CardTitle className="text-lg">Analyze Specification Document</CardTitle>
                <CardDescription>
-                Upload a plain text (.txt) file containing system specifications. The AI will attempt to extract and fill in the parameters below.
+                Upload a specification file to have the AI attempt to extract parameters. 
+                <strong className="text-destructive-foreground/90"> Note: Only plain text (.txt) files can be reliably read. For .doc or .pdf, please copy the text into a .txt file before uploading.</strong>
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -173,7 +174,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
                     <span>Choose File</span>
                   </label>
                 </Button>
-                <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept=".txt,text/plain" />
+                <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} accept=".txt,text/plain,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf,application/pdf" />
                 <Button onClick={handleFileExtract} disabled={!file || isExtracting || isSubmitting}>
                   {isExtracting ? <Loader2 className="animate-spin" /> : <FileSearch />}
                   <span>{isExtracting ? 'Extracting...' : 'Extract Parameters'}</span>
