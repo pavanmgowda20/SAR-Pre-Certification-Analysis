@@ -1,7 +1,6 @@
 'use server';
 
 import { generateSarRecommendations, type GenerateSarRecommendationsOutput, type GenerateSarRecommendationsInput } from '@/ai/flows/generate-sar-recommendations';
-import { analyzeSpecDocument } from '@/ai/flows/analyze-spec-document';
 import { SarAnalysisSchema, type SarAnalysisInput } from '@/lib/schemas';
 
 interface AnalysisResult {
@@ -40,18 +39,5 @@ export async function runAnalysis(input: SarAnalysisInput): Promise<AnalysisResu
     console.error("SAR Analysis Action Error:", e);
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
     return { error: `The analysis encountered an unexpected server error: ${errorMessage}` };
-  }
-}
-
-export async function extractParametersFromFile(fileContent: string): Promise<Partial<SarAnalysisInput> | { error: string }> {
-  try {
-    const result = await analyzeSpecDocument({ documentText: fileContent });
-    // The result from the flow is already in the correct shape (or will have missing fields)
-    // We can cast it directly to our partial input type.
-    return result as Partial<SarAnalysisInput>;
-  } catch (e) {
-    console.error("File Analysis Action Error:", e);
-    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
-    return { error: `The document analysis failed: ${errorMessage}` };
   }
 }
