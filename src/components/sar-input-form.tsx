@@ -30,6 +30,8 @@ import {
   Sigma,
   Power,
   Atom,
+  Upload,
+  FileText,
 } from 'lucide-react';
 import {
   Accordion,
@@ -37,6 +39,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Separator } from './ui/separator';
+import React from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { extractParametersFromFile } from '@/app/actions';
 
 const formGroups = [
     {
@@ -94,16 +100,104 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
     },
     mode: 'onTouched',
   });
+  
+  const [isExtracting, setIsExtracting] = React.useState(false);
+  const [fileName, setFileName] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setFileName(file.name);
+    setIsExtracting(true);
+
+    try {
+      const text = await file.text();
+      const result = await extractParametersFromFile(text);
+
+      if ('error' in result) {
+        toast({
+          variant: 'destructive',
+          title: 'Extraction Failed',
+          description: result.error,
+        });
+      } else {
+        // Reset form to clear previous values before setting new ones
+        form.reset();
+        for (const [key, value] of Object.entries(result)) {
+            if (value !== undefined && value !== null) {
+                form.setValue(key as keyof SarAnalysisInput, Number(value), { shouldValidate: true });
+            }
+        }
+        toast({
+          title: 'Extraction Successful',
+          description: 'Parameters from your document have been filled into the form.',
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error Reading File',
+        description: 'Could not read the uploaded document. Please ensure it is a valid text-based file.',
+      });
+    } finally {
+      setIsExtracting(false);
+      // Reset file input to allow re-uploading the same file
+      if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   return (
     <Card className="w-full shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl">AAAU Parameters</CardTitle>
-        <CardDescription>Enter the parameters to begin the SAR pre-certification analysis. Fields with * are required.</CardDescription>
+        <CardDescription>Enter parameters manually or upload a spec sheet to auto-fill the form.</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="space-y-4 mb-6">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Upload className="w-5 h-5 text-primary" />
+                Analyze Specification Document
+            </h3>
+            <Input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              id="spec-file-upload"
+              accept=".txt,.csv,.md,.json"
+              disabled={isExtracting || isSubmitting}
+            />
+            <Button 
+                onClick={() => fileInputRef.current?.click()} 
+                variant="outline" 
+                className="w-full"
+                disabled={isExtracting || isSubmitting}
+            >
+                {isExtracting ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                    <FileText className="mr-2 h-5 w-5" />
+                )}
+                {isExtracting ? 'Analyzing Document...' : (fileName ? `Change File (${fileName})` : 'Upload Spec Sheet (.txt, .csv, .md)')}
+            </Button>
+             <p className="text-sm text-muted-foreground text-center">
+                After uploading, review the extracted values below before running the final analysis.
+            </p>
+        </div>
+
+        <Separator className="my-6" />
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onAnalysisSubmit)} className="space-y-6">
+            <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+                <FileSearch className="w-5 h-5 text-primary" />
+                Manual Parameter Entry
+            </h3>
             <Accordion type="multiple" defaultValue={['item-0', 'item-1']} className="w-full">
               {formGroups.map((group, groupIndex) => (
                 <AccordionItem value={`item-${groupIndex}`} key={group.title}>
@@ -127,7 +221,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
                                 {fieldInfo.label} {fieldInfo.required && <span className="text-destructive">*</span>}
                               </FormLabel>
                               <FormControl>
-                                <Input type="number" step="any" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} />
+                                <Input type="number" step="any" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : +e.target.value)} value={field.value ?? ''} disabled={isExtracting || isSubmitting} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -140,7 +234,7 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
               ))}
             </Accordion>
 
-            <Button type="submit" disabled={isSubmitting} className="w-full text-lg py-6 mt-8" size="lg">
+            <Button type="submit" disabled={isSubmitting || isExtracting} className="w-full text-lg py-6 mt-8" size="lg">
               {isSubmitting ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
