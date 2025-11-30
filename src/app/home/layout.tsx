@@ -49,11 +49,11 @@ export default function HomeLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background relative">
       <Image
-        src="https://images.unsplash.com/photo-1589262810753-832c99a4918f?q=80&w=1920"
-        alt="Fighter jet background"
+        src="https://images.unsplash.com/photo-1541890372-3512816b8a28?q=80&w=1920"
+        alt="3D Aircraft Watermark"
         fill
-        className="object-cover object-center opacity-10"
-        data-ai-hint="fighter jet"
+        className="object-contain object-center opacity-5"
+        data-ai-hint="aircraft schematic"
       />
       <div className="relative z-10 flex flex-col flex-1">
         <AppHeader />
