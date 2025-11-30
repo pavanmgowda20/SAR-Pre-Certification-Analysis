@@ -19,18 +19,14 @@ export async function runAnalysis(input: SarAnalysisInput): Promise<AnalysisResu
     // Default undefined optional fields to 0
     const analysisInput: GenerateSarRecommendationsInput = {
       ...validatedFields.data,
-      eirp: validatedFields.data.eirp ?? 0,
       gt: validatedFields.data.gt ?? 0,
       beamPointingAccuracy: validatedFields.data.beamPointingAccuracy ?? 0,
       islr: validatedFields.data.islr ?? 0,
       phaseStability: validatedFields.data.phaseStability ?? 0,
       amplitudeStability: validatedFields.data.amplitudeStability ?? 0,
-      chirpBandwidth: validatedFields.data.chirpBandwidth ?? 0,
       crossPolIsolation: validatedFields.data.crossPolIsolation ?? 0,
-      trmOutputPower: validatedFields.data.trmOutputPower ?? 0,
       pae: validatedFields.data.pae ?? 0,
       noiseFigure: validatedFields.data.noiseFigure ?? 0,
-      dcPowerConsumption: validatedFields.data.dcPowerConsumption ?? 0,
     };
 
     const result = await generateSarRecommendations(analysisInput);

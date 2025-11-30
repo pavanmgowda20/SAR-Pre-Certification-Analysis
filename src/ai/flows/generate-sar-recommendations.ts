@@ -13,25 +13,19 @@ import {z} from 'genkit';
 
 const GenerateSarRecommendationsInputSchema = z.object({
   // Array-Level Radiation Parameters
-  eirp: z.number().optional().describe('EIRP in dBW'),
   gt: z.number().optional().describe('G/T in dB/K'),
   beamPointingAccuracy: z.number().optional().describe('Beam Pointing Accuracy in degrees'),
   sidelobeLevel: z.number().describe('Side lobe level in dB'),
   islr: z.number().optional().describe('Integrated Sidelobe Ratio in dB'),
   
   // SAR-Specific Signal Quality Parameters
-  phaseStability: z.number().optional().describe('Phase Stability in degrees RMS'),
-  amplitudeStability: z.number().optional().describe('Amplitude Stability in dB RMS'),
-  chirpBandwidth: z.number().optional().describe('Chirp Bandwidth in MHz'),
+  phaseStability: z.number().optional().describe('Phase Stability in degrees'),
+  amplitudeStability: z.number().optional().describe('Amplitude Stability in dB'),
   crossPolIsolation: z.number().optional().describe('Cross-Polarization Isolation in dB'),
   
   // TRM (Transmit/Receive Module) Level Parameters
-  trmOutputPower: z.number().optional().describe('TRM Output Power in Watts'),
   pae: z.number().optional().describe('Power Added Efficiency as a percentage'),
   noiseFigure: z.number().optional().describe('Noise Figure in dB'),
-
-  // Power and Thermal Parameters
-  dcPowerConsumption: z.number().optional().describe('DC Power Consumption in kW'),
 
   // Core System Parameters
   antennaGain: z.number().describe('Antenna gain in dBi'),
@@ -97,26 +91,16 @@ Total Input Power: {{inputPower}} dBm
 Duty Cycle: {{dutyCycle}}%
 Distance from body: {{distance}} cm
 
-**Array-Level Radiation Parameters:**
-{{#if eirp}}EIRP: {{eirp}} dBW{{/if}}
+**Airborne SAR Parameters:**
 {{#if gt}}G/T: {{gt}} dB/K{{/if}}
 {{#if beamPointingAccuracy}}Beam Pointing Accuracy: {{beamPointingAccuracy}} deg{{/if}}
 Sidelobe Level: {{sidelobeLevel}} dB
 {{#if islr}}ISLR: {{islr}} dB{{/if}}
-
-**SAR-Specific Signal Quality Parameters:**
-{{#if phaseStability}}Phase Stability: {{phaseStability}} deg RMS{{/if}}
-{{#if amplitudeStability}}Amplitude Stability: {{amplitudeStability}} dB RMS{{/if}}
-{{#if chirpBandwidth}}Chirp Bandwidth: {{chirpBandwidth}} MHz{{/if}}
+{{#if phaseStability}}Phase Stability: {{phaseStability}} deg{{/if}}
+{{#if amplitudeStability}}Amplitude Stability: {{amplitudeStability}} dB{{/if}}
 {{#if crossPolIsolation}}Cross-Pol Isolation: {{crossPolIsolation}} dB{{/if}}
-
-**TRM Level Parameters:**
-{{#if trmOutputPower}}TRM Output Power: {{trmOutputPower}} W{{/if}}
 {{#if pae}}Power Added Efficiency: {{pae}}%{{/if}}
 {{#if noiseFigure}}Noise Figure: {{noiseFigure}} dB{{/if}}
-
-**Power and Thermal Parameters:**
-{{#if dcPowerConsumption}}DC Power Consumption: {{dcPowerConsumption}} kW{{/if}}
 
 Your response must be structured strictly according to the output schema.`,
 });

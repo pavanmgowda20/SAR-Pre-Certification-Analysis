@@ -25,79 +25,64 @@ const parameterGroups = [
     groupTitle: 'Airborne SAR Parameters',
     parameters: [
       {
-        name: 'EIRP',
-        purpose: 'Effective power radiated in main beam.\n\nEIRP = Pt * G or EIRP(dBW) = Pt(dBW) + G(dBi)',
-        limit: '0-10 dBW (small) / 35-40 dBW (large)',
-      },
-      {
         name: 'G/T',
-        purpose: 'Sensitivity of antenna + receiver.\n\nG/T = G(dBi) - 10 log10(Tsys)',
-        limit: '-5 to +5 dB/K',
+        purpose: 'Sensitivity of antenna + receiver.',
+        formula: 'G/T = Ga - 10log10(Tsys)',
+        limit: '>30dB/K',
       },
       {
         name: 'Beam Pointing Accuracy',
-        purpose: 'Accuracy of beam steering direction.\n\nError = Bdesired - Bactual',
-        limit: '±0.1° to ±0.5°',
+        purpose: 'Accuracy of beam steering.',
+        formula: 'Δθ = |θa - θd|',
+        limit: '< 0.03°',
       },
       {
-        name: 'Sidelobe Level (SLL)',
-        purpose: 'Level of unwanted sidelobes.\n\nSLL = 20 log10(SL / ML)',
+        name: 'SLL',
+        purpose: 'Level of unwanted sidelobes.',
+        formula: 'SLL = 10log10(Psll / Pmain)',
         limit: '-13 to -25 dB',
       },
       {
         name: 'ISLR',
-        purpose: 'Total sidelobe energy vs main lobe.\n\nISLR = 10 log10(Esidelobe / Emain)',
-        limit: '-20 to -30 dB',
+        purpose: 'Total sidelobe energy vs main lobe.',
+        formula: 'ISLR = 10log10(ΣPi_sll / Pmain)',
+        limit: '-20 dB',
       },
       {
         name: 'Phase Stability',
-        purpose: 'How stable phase stays across pulses.\n\nΔφ = (2π / λ) * Δt',
-        limit: '1-5° drift',
+        purpose: 'Phase stability across pulses.',
+        formula: 'Δφ = (2π / λ) × Δt',
+        limit: '1-5°',
       },
       {
         name: 'Amplitude Stability',
-        purpose: 'How constant amplitude remains.\n\nΔA = (Amax - Amin) / Aavg * 100%',
-        limit: '<1% (~0.1 dB)',
-      },
-      {
-        name: 'Chirp Bandwidth',
-        purpose: 'Frequency sweep in one pulse.\n\nB = fmax - fmin',
-        limit: '100-500 MHz',
+        purpose: 'Amplitude consistency.',
+        formula: 'ΔA = (Amax - Amin) / Aavg × 100%',
+        limit: '0.1 dB',
       },
       {
         name: 'Cross-Pol Isolation',
-        purpose: 'Ability to separate H/V polarizations.\n\nXPI = 20 log10(Eco / Ecross)',
-        limit: '25-35 dB',
+        purpose: 'Separation of H/V polarization.',
+        formula: 'CPI = 10log10(Pco / Pcross)',
+        limit: '>25dB',
       },
       {
         name: 'TRM Calibration',
-        purpose: 'Accuracy of TRM phase/amplitude matching.\n\nPhase Error = φset - φactual',
-        limit: '<2° phase, <0.2 dB amp',
-      },
-      {
-        name: 'Output Power',
-        purpose: 'RF power produced by each TRM.\n\nPout = V²/R or Pt = Pin * GainPA',
-        limit: '5-50 W/TRM, 1-3 kW total',
+        purpose: 'Matching TRM phase & amplitude.',
+        formula: 'Phase Err = φset - φactual',
+        limit: '<2° & <0.2 dB',
       },
       {
         name: 'PAE',
-        purpose: 'Efficiency of DC-to-RF power conversion.\n\nPAE = (Pout - Pin) / PDC * 100%',
-        limit: '30-60%',
+        purpose: 'PA efficiency.',
+        formula: 'PAE = ((Pout - Pin) / P_DC) × 100%',
+        limit: '60%',
       },
       {
-        name: 'Noise Figure (NF)',
-        purpose: 'Extra noise added by receiver.\n\nNF = SNRin / SNRout',
-        limit: '1-3 dB',
-      },
-      {
-        name: 'Phase / Amp Control Bits',
-        purpose: 'Resolution of TRM tuning accuracy.\n\nPhase step = 360° / 2^n; Amp step = Amax / 2^n',
-        limit: '6-7 bits phase (0.5-1°), 0.25-0.5 dB amp',
-      },
-      {
-        name: 'DC Power & Thermal Stability',
-        purpose: 'Power usage + phase drift vs temperature.\n\nPDC = V * I; Phase Drift = k * ΔT',
-        limit: '200-2000 W, <1-2° drift, <0.1 dB amp drift',
+        name: 'Noise Figure',
+        purpose: 'Extra noise added.',
+        formula: 'NF = 10log10(SNRin / SNRout)',
+        limit: '3 dB',
       },
     ],
   }
@@ -116,7 +101,7 @@ export function CalculationFormulas() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+        <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
           {parameterGroups.map((group, index) => (
             <AccordionItem value={`item-${index}`} key={index}>
               <AccordionTrigger className="text-lg font-semibold text-left">{group.groupTitle}</AccordionTrigger>
@@ -126,7 +111,7 @@ export function CalculationFormulas() {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-1/4 font-bold">Parameter</TableHead>
-                        <TableHead className="w-1/2 font-bold">Formula / Purpose</TableHead>
+                        <TableHead className="w-1/2 font-bold">{group.groupTitle === 'Core System Parameters' ? 'Purpose' : 'Formula / Purpose'}</TableHead>
                         <TableHead className="w-1/4 font-bold">Typical Limit / Check Value</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -134,7 +119,7 @@ export function CalculationFormulas() {
                       {group.parameters.map((param, pIndex) => (
                         <TableRow key={pIndex}>
                           <TableCell className="font-medium text-foreground">{param.name}</TableCell>
-                          <TableCell className="text-muted-foreground whitespace-pre-wrap">{param.purpose}</TableCell>
+                          <TableCell className="text-muted-foreground whitespace-pre-wrap">{(param as any).formula ? `${(param as any).purpose}\n\n${(param as any).formula}` : param.purpose}</TableCell>
                           <TableCell className="text-muted-foreground whitespace-pre-wrap">{param.limit}</TableCell>
                         </TableRow>
                       ))}

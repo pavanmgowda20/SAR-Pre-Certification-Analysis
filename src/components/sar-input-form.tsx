@@ -30,7 +30,6 @@ import {
   Sigma,
   Power,
   Atom,
-  BatteryCharging,
 } from 'lucide-react';
 import {
   Accordion,
@@ -52,42 +51,20 @@ const formGroups = [
         ]
     },
     {
-        title: 'Array-Level Radiation Parameters',
+        title: 'Airborne SAR Parameters',
         icon: Signal,
         fields: [
-            { name: 'eirp', label: 'EIRP (dBW)', icon: Zap },
             { name: 'gt', label: 'G/T (dB/K)', icon: Thermometer },
             { name: 'beamPointingAccuracy', label: 'Beam Pointing Accuracy (deg)', icon: Target },
-            { name: 'sidelobeLevel', label: 'Sidelobe Level (dB)', icon: Waves, required: true },
+            { name: 'sidelobeLevel', label: 'Sidelobe Level (SLL) (dB)', icon: Waves, required: true },
             { name: 'islr', label: 'ISLR (dB)', icon: Ratio },
-        ]
-    },
-    {
-        title: 'SAR-Specific Signal Quality Parameters',
-        icon: Sigma,
-        fields: [
-            { name: 'phaseStability', label: 'Phase Stability (deg RMS)', icon: Gauge },
-            { name: 'amplitudeStability', label: 'Amplitude Stability (dB RMS)', icon: Gauge },
-            { name: 'chirpBandwidth', label: 'Chirp Bandwidth (MHz)', icon: Waves },
-            { name: 'crossPolIsolation', label: 'Cross-Polarization Isolation (dB)', icon: Atom },
-        ]
-    },
-    {
-        title: 'TRM Level Parameters',
-        icon: Power,
-        fields: [
-            { name: 'trmOutputPower', label: 'TRM Output Power (W)', icon: Zap },
-            { name: 'pae', label: 'Power Added Efficiency (%)', icon: Percent },
+            { name: 'phaseStability', label: 'Phase Stability (deg)', icon: Gauge },
+            { name: 'amplitudeStability', label: 'Amplitude Stability (dB)', icon: Gauge },
+            { name: 'crossPolIsolation', label: 'Cross-Pol Isolation (dB)', icon: Atom },
+            { name: 'pae', label: 'Power Added Efficiency (PAE) (%)', icon: Percent },
             { name: 'noiseFigure', label: 'Noise Figure (dB)', icon: Signal },
         ]
     },
-    {
-        title: 'Power and Thermal Parameters',
-        icon: BatteryCharging,
-        fields: [
-            { name: 'dcPowerConsumption', label: 'DC Power Consumption (kW)', icon: Zap },
-        ]
-    }
 ] as const;
 
 
@@ -106,18 +83,14 @@ export function SarInputForm({ onAnalysisSubmit, isSubmitting }: SarInputFormPro
       inputPower: undefined,
       dutyCycle: undefined,
       distance: undefined,
-      eirp: undefined,
       gt: undefined,
       beamPointingAccuracy: undefined,
       islr: undefined,
       phaseStability: undefined,
       amplitudeStability: undefined,
-      chirpBandwidth: undefined,
       crossPolIsolation: undefined,
-      trmOutputPower: undefined,
       pae: undefined,
       noiseFigure: undefined,
-      dcPowerConsumption: undefined,
     },
     mode: 'onTouched',
   });
