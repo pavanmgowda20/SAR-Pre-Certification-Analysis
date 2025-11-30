@@ -1,11 +1,34 @@
 'use server';
 
 import { generateSarRecommendations, type GenerateSarRecommendationsOutput, type GenerateSarRecommendationsInput } from '@/ai/flows/generate-sar-recommendations';
+import { analyzeSpecificationDocument, type AnalyzeSpecDocumentOutput } from '@/ai/flows/analyze-spec-document';
 import { SarAnalysisSchema, type SarAnalysisInput } from '@/lib/schemas';
 
 interface AnalysisResult {
   data?: GenerateSarRecommendationsOutput;
   error?: string;
+}
+
+interface ExtractionResult {
+  data?: AnalyzeSpecDocumentOutput;
+  error?: string;
+}
+
+export async function extractParametersFromFile(documentText: string): Promise<ExtractionResult> {
+  try {
+    if (!documentText) {
+      return { error: 'The document appears to be empty.' };
+    }
+    const result = await analyzeSpecificationDocument(documentText);
+    if (!result) {
+      return { error: 'Failed to extract parameters from the document.' };
+    }
+    return { data: result };
+  } catch (e) {
+    console.error('File Analysis Action Error:', e);
+    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred during file analysis.';
+    return { error: `Server error: ${errorMessage}` };
+  }
 }
 
 export async function runAnalysis(input: SarAnalysisInput): Promise<AnalysisResult> {
