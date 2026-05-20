@@ -49,7 +49,7 @@ export default function HomeLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background relative">
       <Image
-        src="https://images.unsplash.com/photo-1541890372-3512816b8a28?q=80&w=1920"
+        src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=1920"
         alt="3D Aircraft Watermark"
         fill
         className="object-contain object-center opacity-5"
